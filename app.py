@@ -1,10 +1,15 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
+from flask_cors import CORS
 import requests
 import random
-from flask_cors import CORS
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
+# More comprehensive CORS configuration
 CORS(app, resources={
     r"/*": {
         "origins": "*",
@@ -18,12 +23,14 @@ CORS(app, resources={
     }
 })
 
-# Add additional headers to all responses
 @app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
     return response
 
 def fetch_memes(subreddit='memes', limit=50):
@@ -43,7 +50,7 @@ def fetch_memes(subreddit='memes', limit=50):
         
         # Check if request was successful
         if response.status_code != 200:
-            print(f"Failed to fetch memes. Status code: {response.status_code}")
+            logging.error(f"Failed to fetch memes. Status code: {response.status_code}")
             return []
 
         reddit_data = response.json()
@@ -63,7 +70,7 @@ def fetch_memes(subreddit='memes', limit=50):
         return memes
     
     except Exception as e:
-        print(f"Error fetching memes: {e}")
+        logging.error(f"Error fetching memes: {e}")
         return []
 
 @app.route('/')
@@ -78,31 +85,36 @@ def get_memes():
     """
     API endpoint to get memes
     """
-    # You can make this more dynamic by allowing subreddit selection
-    memes = fetch_memes()
-    
-    # Shuffle memes to provide variety
-    random.shuffle(memes)
-    
-    return jsonify(memes)
+    try:
+        # You can make this more dynamic by allowing subreddit selection
+        memes = fetch_memes()
+        
+        # Shuffle memes to provide variety
+        random.shuffle(memes)
+        
+        return jsonify(memes)
+    except Exception as e:
+        logging.error(f"API memes error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.errorhandler(404)
 def page_not_found(e):
     """
     Custom 404 error handler
     """
-    return render_template('404.html'), 404
+    return jsonify(error="Page not found"), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
     """
     Custom 500 error handler
     """
-    return render_template('500.html'), 500
+    return jsonify(error="Internal server error"), 500
 
-if __name__ == '__main__':
-    app.run(
-        host="0.0.0.0",  # Listen on all available network interfaces
-        port=5000,       # Default Flask port
-        debug=True       # Enable debug mode during development
-    )
+# Debugging route
+@app.route('/debug')
+def debug():
+    return jsonify({
+        "status": "ok",
+        "message": "Debug endpoint is working"
+    })
