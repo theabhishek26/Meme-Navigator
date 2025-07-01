@@ -7,7 +7,9 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            static_folder='static', 
+            template_folder='templates')
 
 # More comprehensive CORS configuration
 CORS(app, resources={
