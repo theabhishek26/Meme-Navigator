@@ -277,7 +277,7 @@
                       <span id="memeSource" class="meme-source">Loading...</span>
                   </div>
                   <div>
-                    <button   id="downloadButton" class="nav-button">Meme Source</button>
+                    <button   id="downloadButton" class="nav-button">Download </button>
 
                       <button id="nextButton" class="nav-button">Next</button>
                   </div>
@@ -488,6 +488,85 @@ class MemeNavigator {
         }
     }
 
+    downloadMeme() {
+    try {
+        // Ensure we have a valid meme
+        if (this.currentIndex < 0 || this.currentIndex >= this.memes.length) {
+            this.showErrorMessage('No meme selected');
+            return;
+        }
+
+        const currentMeme = this.memes[this.currentIndex];
+        const memeUrl = currentMeme.url;
+
+        // Validate URL
+        if (!memeUrl) {
+            this.showErrorMessage('Invalid meme URL');
+            return;
+        }
+
+        // Fetch the image and trigger download
+        fetch(memeUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Create a link element
+                const link = document.createElement('a');
+                
+                // Create a blob URL
+                link.href = URL.createObjectURL(blob);
+                
+                // Generate filename
+                const filename = this.generateFilename(memeUrl);
+                link.download = filename;
+
+                // Append to body, trigger click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Free up memory
+                URL.revokeObjectURL(link.href);
+
+                // Optional: Show success message
+                this.showSuccessMessage(`Downloaded: ${filename}`);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                this.showErrorMessage('Failed to download meme');
+            });
+    } catch (error) {
+        console.error('Download error:', error);
+        this.showErrorMessage('Failed to download meme');
+    }
+}
+
+
+generateFilename(url) {
+    try {
+        // Extract filename from URL or generate a default
+        const urlParts = url.split('/');
+        let filename = urlParts[urlParts.length - 1];
+
+        // Remove query parameters
+        filename = filename.split('?')[0];
+
+        // Ensure file extension
+        if (!filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+            filename += '.jpg';
+        }
+
+        // Prefix with meme index
+        return `meme_${this.currentIndex + 1}_${filename}`;
+    } catch (error) {
+        console.error('Filename generation error:', error);
+        return `meme_${this.currentIndex + 1}.jpg`;
+    }
+}
 
     // New download method
 /*async downloadMeme() {
