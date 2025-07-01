@@ -1,0 +1,21 @@
+# Core Flask packages
+Flask==2.3.2
+flask-cors==4.0.0
+Werkzeug==2.3.4
+itsdangerous==2.1.2
+Jinja2==3.1.2
+
+# HTTP requests
+requests==2.31.0
+
+# Python standard runtime
+gunicorn==20.1.0
+
+# Additional utilities
+urllib3==2.0.3
+certifi==2023.5.7
+charset-normalizer==3.1.0
+idna==3.4
+
+# Optional: For better performance and deployment
+python-dotenv==1.0.0
