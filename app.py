@@ -5,7 +5,26 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "allow_headers": [
+            "Content-Type", 
+            "Authorization", 
+            "Access-Control-Allow-Methods",
+            "Access-Control-Allow-Origin"
+        ],
+        "supports_credentials": True
+    }
+})
+
+# Add additional headers to all responses
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 def fetch_memes(subreddit='memes', limit=50):
     """
