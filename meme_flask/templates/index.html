@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meme Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --card-dark: #1E1E1E;
+            --text-light: #E0E0E0;
+            --accent-color: #BB86FC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 95%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .meme-container {
+            background-color: var(--card-dark);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            overflow: hidden;
+            margin-top: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .meme-image {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            background-color: #000;
+        }
+
+        .meme-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: rgba(30,30,30,0.9);
+}
+.meme-navigation-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+        .nav-button {
+            background-color: var(--accent-color);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .meme-source {
+            color: var(--text-light);
+            font-weight: 300;
+        }
+
+        .header {
+            text-align: center;
+            padding: 1.5rem 0;
+            background-color: rgba(30,30,30,0.5);
+        }
+
+        .header h1 {
+            color: var(--accent-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(30,30,30,0.5);
+            margin-top: auto;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .meme-navigation {
+                flex-direction: column;
+            }
+            .nav-button {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+        }
+        .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background-color: rgba(30,30,30,0.5);
+        max-width: 1200px;
+        margin: 0 auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-grow: 1;
+        margin: 0 2rem;
+    }
+
+    .header-middle {
+        display: flex;
+        align-items: center;
+        background-color: rgba(50,50,50,0.3);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        margin: 0.5rem 0;
+    }
+
+    .header-middle-icon {
+        margin-right: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .header-middle-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--accent-color);
+    }
+
+    .header-middle-text {
+        color: #e0e0e0;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .header-middle-text span {
+        color: var(--accent-color);
+        margin-left: 0.5rem;
+        font-weight: bold;
+    }
+
+    .header h1 {
+        color: var(--accent-color);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .header p {
+        color: #e0e0e0;
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .logo {
+        width: 60px;
+        height: 60px;
+        transition: transform 0.3s ease;
+        border-radius: 50%;
+        border: 3px solid var(--accent-color);
+    }
+
+    .logo:hover {
+        transform: scale(1.1) rotate(360deg);
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .header-content {
+            align-items: center;
+            margin: 0;
+        }
+
+        .header-middle {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .logo {
+            margin-top: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header-middle-text {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+    <!-- Add this to the CSS section, inside the <style> tag -->
+
+.download-button {
+    background-color: var(--accent-color);
+    color: var(--bg-dark);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    margin-left: 0.5rem;
+    text-align: center;
+}
+
+.download-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+    </style>
+</head>
+<body>
+    <div class="header container">
+      <div class="header-content">
+        <h1>Meme Navigator</h1>
+        <p>Browse and explore memes!</p>
+    </div>
+    <img 
+        src="{{ url_for('static', filename='images/logo.svg') }}" 
+        alt="Meme Navigator Logo" 
+        class="logo"
+    >
+    </div>
+
+    <main class="container">
+        <div class="meme-container">
+            <img 
+                id="memeImage"
+                src="" 
+                alt="Meme" 
+                class="meme-image" 
+                loading="lazy"
+                width="800"
+                height="600"
+            >
+            <div class="meme-navigation">
+                <button id="prevButton" class="nav-button" disabled>Previous</button>
+                  <div class="meme-navigation-content">
+                      <span id="memeSource" class="meme-source">Loading...</span>
+                  </div>
+                  <div>
+                    <button   id="downloadButton" class="nav-button">Meme Source</button>
+
+                      <button id="nextButton" class="nav-button">Next</button>
+                  </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        © 2025 Meme Navigator 
+    </footer>
+
+    <script>
+
+
+
+
+// Helper method to get file extension
+/*getFileExtension(url) {
+    const match = url.match(/\.(\w+)$/);
+    return match ? match[1] : 'jpg';
+}*/
+      
+        // Meme data structure
+class MemeNavigator {
+    constructor() {
+        this.memes = [];
+        this.currentIndex = -1;
+        this.prevButton = document.getElementById('prevButton');
+        this.nextButton = document.getElementById('nextButton');
+        this.downloadButton = document.getElementById('downloadButton');
+        this.memeImage = document.getElementById('memeImage');
+        this.memeSource = document.getElementById('memeSource');
+
+        this.prevButton.addEventListener('click', () => this.showPreviousMeme());
+        this.nextButton.addEventListener('click', () => this.showNextMeme());
+        this.downloadButton.addEventListener('click', () => this.downloadMeme());
+
+        this.fetchInitialMemes();
+    }
+
+    async fetchInitialMemes() {
+        try {
+            // Replace with your actual API endpoint
+            const response = await fetch('/api/memes');
+            this.memes = await response.json();
+
+            if (this.memes.length > 0) {
+                this.currentIndex = 0;
+                this.displayCurrentMeme();
+            }
+        } catch (error) {
+            console.error('Failed to fetch memes:', error);
+            this.memeSource.textContent = 'Failed to load memes';
+        }
+    }
+
+    displayCurrentMeme() {
+        if (this.currentIndex >= 0 && this.currentIndex < this.memes.length) {
+            const currentMeme = this.memes[this.currentIndex];
+            
+            // Update image
+            this.memeImage.src = currentMeme.url;
+            this.memeImage.alt = `Meme`;
+            
+            // Remove subreddit display
+            this.memeSource.textContent = '';
+            
+            // Manage button states
+            this.prevButton.disabled = this.currentIndex === 0;
+            this.nextButton.disabled = this.currentIndex === this.memes.length - 1;
+            
+            // Enable/disable download button
+            this.downloadButton.disabled = !currentMeme.url;
+        }
+    }
+
+    showNextMeme() {
+        if (this.currentIndex < this.memes.length - 1) {
+            this.currentIndex++;
+            this.displayCurrentMeme();
+        }
+    }
+
+    showPreviousMeme() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.displayCurrentMeme();
+        }
+    }
+
+        // Direct download method using image source
+    downloadMemeDirectMethod(url) {
+        try {
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Generate filename
+            const filename = this.generateFilename(url);
+            link.download = filename;
+
+            // Append to body, trigger click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show success message
+            this.showSuccessMessage(`Downloaded: ${filename}`);
+        } catch (error) {
+            console.error('Direct download failed:', error);
+            this.showErrorMessage('Direct download failed');
+        }
+    }
+
+        // Generate a meaningful filename
+    generateFilename(url) {
+        try {
+            // Extract filename from URL or generate a default
+            const urlParts = url.split('/');
+            let filename = urlParts[urlParts.length - 1];
+
+            // Remove query parameters
+            filename = filename.split('?')[0];
+
+            // Ensure file extension
+            if (!filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                filename += '.jpg';
+            }
+
+            // Prefix with meme index
+            return `meme_${this.currentIndex + 1}_${filename}`;
+        } catch (error) {
+            console.error('Filename generation error:', error);
+            return `meme_${this.currentIndex + 1}.jpg`;
+        }
+    }
+      // Utility method for error messages
+      /*
+    showErrorMessage(message) {
+        const errorToast = document.createElement('div');
+        errorToast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+        `;
+        errorToast.textContent = message;
+        document.body.appendChild(errorToast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+            document.body.removeChild(errorToast);
+        }, 3000);
+    }*/
+
+    // Utility method for success messages
+    /*
+    showSuccessMessage(message) {
+        const successToast = document.createElement('div');
+        successToast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+        `;
+        successToast.textContent = message;
+        document.body.appendChild(successToast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+            document.body.removeChild(successToast);
+        }, 3000);
+    }*/
+
+    
+
+    // Comprehensive download method with multiple approaches
+    downloadMeme() {
+        try {
+            // Ensure we have a valid meme
+            if (this.currentIndex < 0 || this.currentIndex >= this.memes.length) {
+                this.showErrorMessage('No meme selected');
+                return;
+            }
+
+            const currentMeme = this.memes[this.currentIndex];
+            const memeUrl = currentMeme.url;
+
+            // Validate URL
+            if (!memeUrl) {
+                this.showErrorMessage('Invalid meme URL');
+                return;
+            }
+
+            // Method 1: Direct download using image source
+            this.downloadMemeDirectMethod(memeUrl);
+        } catch (error) {
+            console.error('Download error:', error);
+            this.showErrorMessage('Failed to download meme');
+        }
+    }
+
+
+    // New download method
+/*async downloadMeme() {
+    if (this.currentIndex >= 0 && this.currentIndex < this.memes.length) {
+        const currentMeme = this.memes[this.currentIndex];
+        
+        try {
+            // Log the URL to verify it's correct
+            console.log('Attempting to download meme from URL:', currentMeme.url);
+
+            // Add CORS headers if needed
+            const response = await fetch(currentMeme.url, {
+                method: 'GET',
+                mode: 'cors', // Add this to handle cross-origin requests
+                headers: {
+                    'Content-Type': 'image/jpeg',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+
+            // Check if the response is OK
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Get the blob
+            const blob = await response.blob();
+
+            // Verify blob size
+            if (blob.size === 0) {
+                throw new Error('Downloaded file is empty');
+            }
+
+            // Create a link element and trigger download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            
+            // Try to get filename from URL or use a generic name
+            let filename = this.getFilenameFromUrl(currentMeme.url);
+            if (!filename) {
+                filename = `meme_${this.currentIndex + 1}.jpg`;
+            }
+
+            link.download = filename;
+            
+            // Append to body, click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Free up memory
+            URL.revokeObjectURL(link.href);
+
+            // Optional: Show success message
+            this.showDownloadSuccessMessage(filename);
+
+        } catch (error) {
+            console.error('Detailed download error:', error);
+            
+            // More informative error handling
+            let errorMessage = 'Failed to download meme.';
+            if (error.message) {
+                errorMessage += ` Error: ${error.message}`;
+            }
+            
+            // Show error to user
+            this.showDownloadErrorMessage(errorMessage);
+        }
+    }
+}*/
+
+getFilenameFromUrl(url) {
+    try {
+        // Try to extract filename from the last part of the URL
+        const urlParts = url.split('/');
+        let filename = urlParts[urlParts.length - 1];
+        
+        // Remove query parameters
+        filename = filename.split('?')[0];
+        
+        // Ensure we have a valid filename with extension
+        if (!filename.includes('.')) {
+            filename += '.jpg';
+        }
+        
+        return filename;
+    } catch (error) {
+        console.error('Error extracting filename:', error);
+        return null;
+    }
+}
+
+
+    // Helper method to get file extension
+    getFileExtension(url) {
+        const match = url.match(/\.(\w+)$/);
+        return match ? match[1] : 'jpg';
+    }
+}
+
+// Initialize meme navigator when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new MemeNavigator();
+});
+
+        // Initialize meme navigator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MemeNavigator();
+        });
+    </script>
+</body>
+</html>

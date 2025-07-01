@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100" height="100">
+    <defs>
+        <linearGradient id="memeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#BB86FC;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#6200EE;stop-opacity:1" />
+        </linearGradient>
+        
+        <filter id="shadowEffect">
+            <feDropShadow dx="3" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+        </filter>
+    </defs>
+    
+    <circle 
+        cx="100" 
+        cy="100" 
+        r="90" 
+        fill="url(#memeGradient)" 
+        filter="url(#shadowEffect)"
+    />
+    
+    <path 
+        d="M50,90 Q100,140 150,90 Q100,60 50,90" 
+        fill="none" 
+        stroke="white" 
+        stroke-width="10"
+    />
+    
+    <circle 
+        cx="70" 
+        cy="80" 
+        r="10" 
+        fill="white"
+    />
+    
+    <circle 
+        cx="130" 
+        cy="80" 
+        r="10" 
+        fill="white"
+    />
+    
+    <path 
+        d="M80,110 Q100,130 120,110" 
+        fill="none" 
+        stroke="white" 
+        stroke-width="5"
+    />
+</svg>
