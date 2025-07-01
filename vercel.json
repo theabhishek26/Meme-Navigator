@@ -3,16 +3,28 @@
     "builds": [
         {
             "src": "wsgi.py",
-            "use": "@vercel/python"
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.9"
+            }
         }
     ],
     "routes": [
         {
+            "src": "/static/(.*)",
+            "headers": {
+                "Cache-Control": "s-maxage=31536000, immutable"
+            },
+            "dest": "static/$1"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "wsgi.py"
+        },
+        {
             "src": "/(.*)",
             "dest": "wsgi.py"
         }
-    ],
-    "env": {
-        "FLASK_ENV": "production"
-    }
+    ]
 }
